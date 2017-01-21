@@ -8,14 +8,34 @@ public class SingleButtonInput : MonoBehaviour {
 	private bool pressed = false;
 	public float intense = 0.0f;
 	public float limitDistance = 5.0f;
+	public KeyCode codeToCheckFor;
+	private float permaIntense;
+
+
+	private Vector3 result;
 
 	// Use this for initialization
 	void Start () {
 		playerObject = GameObject.FindGameObjectWithTag ("Player");
+		permaIntense = intense;
+		intense = 0.0f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (Input.GetKey (codeToCheckFor)) {
+			playerObject.GetComponent<Rigidbody> ().useGravity = false;
+			intense = permaIntense;
+			pressed = true;
+		}
+
+		if (Input.GetKeyUp (codeToCheckFor)) {
+			intense = 0.0f;
+			playerObject.GetComponent<Rigidbody> ().useGravity = true;
+			pressed = false;
+		}
+		
 		if (pressed) {
 		} else if (playerObject.transform.position.y <= 0) {
 			intense = 0.0f;
@@ -24,9 +44,10 @@ public class SingleButtonInput : MonoBehaviour {
 		}
 	}
 
-	public void PressedInput(float intensity) {
+	public void PressedInput(float intense) {
 		playerObject.GetComponent<Rigidbody> ().useGravity = false;
-		intense = intensity;
+		this.intense = intense;
+		permaIntense = intense;
 		pressed = true;
 	}
 

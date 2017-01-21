@@ -15,7 +15,6 @@ public class PlayerGameState : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		Debug.Log ("collidedwithtrigger");
 		if (other.tag == "DeathField") {
 			playerDied ();
 			Debug.Log ("loadDeathScreen");
@@ -23,6 +22,13 @@ public class PlayerGameState : MonoBehaviour {
 			playerWon ();
 		}
 	}
+
+	/*void OnCollisionEnter(Collider other) {
+		if (other.tag == "DeathField") {
+			playerDied ();
+			Debug.Log ("loadDeathScreen");
+		}
+	}*/
 
 	void playerDied() {
 		Application.LoadLevel ("DeathScreen");

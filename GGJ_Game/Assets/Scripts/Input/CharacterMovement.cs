@@ -22,13 +22,16 @@ public class CharacterMovement : MonoBehaviour {
 		}
 		if (AppliedDistanceFromGround == 0)
 			return;
-		Debug.Log (AppliedDistanceFromGround);
 		Vector3 destination = new Vector3(0, AppliedDistanceFromGround, 0);
 		destination -= transform.position;
 
+		int signed = 1;
+		if (destination.y < 0)
+			signed = -1;
+		destination.y *= destination.y * signed;
 		if (destination.y < 2.0f && destination.y > 0.01f) {
 			destination.y = 2.0f;
 		}
-		transform.GetComponent<Rigidbody> ().velocity = destination * 2;
+		transform.GetComponent<Rigidbody> ().velocity = destination;
 	}
 }

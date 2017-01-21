@@ -4,24 +4,30 @@ using UnityEngine;
 
 public class SpawnerScript : MonoBehaviour {
 
+	public float inspectingValue = 0.0f;
 	public GameObject[] SpawnableObjectsInRange1;
 	public GameObject[] SpawnableObjectsInRange2;
 	public GameObject[] SpawnableObjectsInRange3;
 	public GameObject[] SpawnableObjectsInRange4;
 	public float spawnRate = 0.5f;
 	public float max = 0.0f;
+	public int spawnType = 0;
 
 	private float[] _samples = new float[512];
 	public float[] _freqBand = new float[8];
+	private float[] _prevFreqBand = new float[8];
 	private float[] _buffers =  new float[8];
 	private GameObject camera;
 	private float spawnBucket = 0.0f;
 
 	// Use this for initialization
 	void Start () {
+
 		camera = GameObject.Find ("Main Camera");
 		for (int i = 0; i < _buffers.Length; ++i) {
 			_buffers [i] = spawnRate;
+			_prevFreqBand [i] = 0.0f;
+			_freqBand [i] = 0.0f;
 		}
 	}
 	
@@ -29,39 +35,102 @@ public class SpawnerScript : MonoBehaviour {
 	void Update () {
 
 		getSpectrumAudioSource ();
-
 		spawnBucket += Time.deltaTime;
 
-		/*if (/*spawnBucket >= spawnRate || (_freqBand[1] > 3.0f && spawnBucket >= 0.5f) ) {
-			spawnBucket = 0.0f;
+		inspectingValue = _freqBand [1];
 
-			int randomIndexToSpawn = Random.Range (0, SpawnableObjects.Length);
+		switch (spawnType) {
+		case 0:
+			AttemptAtSpawningOne ();
+			break;
+		case 1:
+			AttemptAtSpawningTwo ();
+			break;
+		case 2:
+			AttemptAtSpawningThree ();
+			break;
+		case 3:
+			SteadySpawning ();
+			break;
+		case 4:
+			SteadySpawnPredesigned ();
+			break;
+		}
+
+	}
+
+	void SteadySpawnPredesigned() {
+		if (spawnBucket >= spawnRate) {
+			spawnBucket = 0.0f;
 
 			Vector3 pos = transform.position;
 			pos.y = -0.5f;
 
-			GameObject obj = Instantiate (SpawnableObjects [randomIndexToSpawn], pos, Quaternion.identity) as GameObject;
-		}*/
-		float total = 0.0f;
-		for (int i = _freqBand.Length - 1; i >= 0; i--) {
-			total += _freqBand [i];
+			int randomIndexToSpawn = Random.Range (0, SpawnableObjectsInRange4.Length);
 
+			GameObject obj = Instantiate (SpawnableObjectsInRange4 [randomIndexToSpawn], pos, Quaternion.identity) as GameObject;
 		}
-		if (total > max) {
-			max = total;
-			// 47
+	}
+
+	void SteadySpawning() {
+
+		if (spawnBucket >= spawnRate) {
+			spawnBucket = 0.0f;
+
+			Vector3 pos = transform.position;
+			pos.y = -0.5f;
+
+			GameObject obj = Instantiate (SpawnableObjectsInRange3 [0], pos, Quaternion.identity) as GameObject;
+		}
+	}
+
+	void AttemptAtSpawningThree() {
+
+		if (_freqBand[1] - _prevFreqBand[1] > 3.5f) {
+
+			Vector3 pos = transform.position;
+			pos.y = -0.5f;
+
+			GameObject obj = Instantiate (SpawnableObjectsInRange3 [0], pos, Quaternion.identity) as GameObject;
 		}
 
+		for (int i = 0; i < _freqBand.Length; ++i) {
+			_prevFreqBand[i] = _freqBand[i];
+		}
 
-		/*Vector3 pos = transform.position;
-		pos.y = -0.5f;
-		int randomIndexToSpawn = Random.Range (0, list.Length);
-		GameObject obj = Instantiate (SpawnableObjectsInRange1[randomIndexToSpawn], pos, Quaternion.identity) as GameObject;
-		obj.transform.localScale.y
+	}
 
-		/*for (int i = _freqBand.Length -1; i >= 0 ; i-=2) {
-			if ((_freqBand [i] > 3.0f || _freqBand [i - 1] > 3.0f) && spawnBucket >= spawnRate ) {
-				spawnBucket = 0.0f;
+	void AttemptAtSpawningTwo() {
+
+		float newtotal = 0.0f;
+		float oldtotal = 0.0f;
+		for (int i = 0; i < 3; ++i) {
+			newtotal += _freqBand [i];
+			oldtotal += _prevFreqBand [i];
+		}
+
+		if (newtotal - oldtotal > 4.0f) {
+
+			Vector3 pos = transform.position;
+			pos.y = -0.5f;
+
+			GameObject obj = Instantiate (SpawnableObjectsInRange1 [0], pos, Quaternion.identity) as GameObject;
+			//46
+			obj.transform.localScale = new Vector3(obj.transform.localScale.x, 4*(newtotal / 20.0f), obj.transform.localScale.z);
+			//4
+		}
+
+		for (int i = 0; i < _freqBand.Length; ++i) {
+			_prevFreqBand[i] = _freqBand[i];
+		}
+
+	}
+
+	void AttemptAtSpawningOne() {
+		for (int i = 0; i < _freqBand.Length; ++i) {
+			if (_freqBand [i] - _prevFreqBand [i] > 4.0f /*&& spawnBucket >= 0.15f*/) {
+
+				spawnBucket /= 2;
 
 				GameObject[] list = new GameObject[1];
 				if (i / 2 == 0) {
@@ -74,15 +143,45 @@ public class SpawnerScript : MonoBehaviour {
 					list = SpawnableObjectsInRange4;
 				}
 
+
+				int randomIndexToSpawn = Random.Range (0, list.Length);
+
 				Vector3 pos = transform.position;
 				pos.y = -0.5f;
-				int randomIndexToSpawn = Random.Range (0, list.Length);
+
 				GameObject obj = Instantiate (list [randomIndexToSpawn], pos, Quaternion.identity) as GameObject;
-				obj.transform.localScale.y
-				//3.8 max minimum 0.5
-				break;
 			}
-		}*/
+		}
+
+
+		if (spawnBucket > spawnRate) {
+			spawnBucket = 0.0f;
+
+			int loudestIndex = -1;
+			float loudestValue = 0.0f;
+			for (int i = 0; i < _freqBand.Length; ++i) {
+				if (_freqBand [i] > loudestValue) {
+					loudestValue = _freqBand [i];
+					loudestIndex = i;
+				}
+
+				if (_freqBand [i] > max) {
+					max = _freqBand [i];
+				}
+			}
+
+			Vector3 pos = transform.position;
+			pos.y = -0.5f;
+
+			GameObject obj = Instantiate (SpawnableObjectsInRange1 [0], pos, Quaternion.identity) as GameObject;
+			//46
+			obj.transform.localScale = new Vector3(obj.transform.localScale.x, 4*(loudestValue / max), obj.transform.localScale.z);
+			//4
+		}
+
+		for (int i = 0; i < _freqBand.Length; ++i) {
+			_prevFreqBand[i] = _freqBand[i];
+		}
 	}
 
 	void getSpectrumAudioSource() {
