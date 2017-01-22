@@ -16,6 +16,10 @@ public class CharacterMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (GetComponent<PlayerGameState> ().hasDied) {
+			return;
+		}
+
 		AppliedDistanceFromGround = 0.0f;
 		foreach (SingleButtonInput buttonInput in buttons) {
 			AppliedDistanceFromGround += buttonInput.intense;
@@ -28,7 +32,7 @@ public class CharacterMovement : MonoBehaviour {
 		int signed = 1;
 		if (destination.y < 0)
 			signed = -1;
-		destination.y *= destination.y * signed;
+		destination.y *= 2;// * signed;
 		if (destination.y < 2.0f && destination.y > 0.01f) {
 			destination.y = 2.0f;
 		}

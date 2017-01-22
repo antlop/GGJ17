@@ -17,9 +17,9 @@ public class PlayerGeneralInfo : MonoBehaviour {
 		
 	}
 
-	public void AddToScore(int amount) {
+	static public void AddToScore(int amount) {
 		score += amount;
 
-		GameObject.Find ("Score").GetComponent<UnityEngine.UI.Text> ().text = "Score: " + score;
+		GameObject.Find ("Score").GetComponent<UnityEngine.UI.Text> ().text = "SCORE: " + score;
 	}
 }

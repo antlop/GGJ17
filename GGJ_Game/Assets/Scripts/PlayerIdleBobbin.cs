@@ -18,14 +18,14 @@ public class PlayerIdleBobbin : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (noddingForward) {
-			rotationAngle += 0.1f * Time.deltaTime;
+			rotationAngle += 0.123f * Time.deltaTime;
 
 			if (rotationAngle >= forwardRotationAngle) {
 				noddingForward = false;
 				rotationAngle = 0.0f;
 			}
 		} else {
-			rotationAngle -=  0.1f * Time.deltaTime;
+			rotationAngle -=  0.123f * Time.deltaTime;
 
 			if (rotationAngle <= backwardRotationAngle) {
 				noddingForward = true;

@@ -26,7 +26,12 @@ public class MoveEnvironment : MonoBehaviour {
 					Debug.Log (randIndex);
 					transforms [randIndex].GetComponent<MeshRenderer> ().material = deathMaterial;
 					transforms [randIndex].tag = "DeathField";
-					transforms [randIndex].GetComponent<BoxCollider> ().isTrigger = true;
+					transforms [randIndex].gameObject.AddComponent<PulssateGlowEffect> ();
+					if (transforms [randIndex].GetComponent<BoxCollider> () != null) {
+						transforms [randIndex].GetComponent<BoxCollider> ().isTrigger = true;
+					} else if (transforms [randIndex].GetComponent<SphereCollider> () != null) {
+						transforms [randIndex].GetComponent<SphereCollider> ().isTrigger = true;
+					}
 				}
 			}
 		}
@@ -42,11 +47,11 @@ public class MoveEnvironment : MonoBehaviour {
 		}
 
 		if (!hasBeenScored && transform.position.x < GameObject.Find ("Player").transform.position.x ) {
-			GameObject.Find ("PlayerInfo").GetComponent<PlayerGeneralInfo> ().AddToScore (10);
+			PlayerGeneralInfo.AddToScore (10);
 			hasBeenScored = true;
 		}
 
-		if (transform.position.x <= -30.0f) {
+		if (transform.position.x <= -60.0f) {
 			Destroy (gameObject);
 		} else if( bucket >= bufferTime && GameObject.Find("Spawner").GetComponent<SpawnerScript>().spawnType == 3 ) {
 			bucket = 0.0f;

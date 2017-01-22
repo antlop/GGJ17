@@ -69,6 +69,15 @@ public class SpawnerScript : MonoBehaviour {
 			int randomIndexToSpawn = Random.Range (0, SpawnableObjectsInRange4.Length);
 
 			GameObject obj = Instantiate (SpawnableObjectsInRange4 [randomIndexToSpawn], pos, Quaternion.identity) as GameObject;
+
+			Transform[] transforms = obj.GetComponentsInChildren<Transform> ();
+			foreach (Transform trans in transforms) {
+
+				if (trans.tag == "DeathField") {
+					trans.gameObject.AddComponent<PulssateGlowEffect> ();
+				}
+			}
+
 		}
 	}
 

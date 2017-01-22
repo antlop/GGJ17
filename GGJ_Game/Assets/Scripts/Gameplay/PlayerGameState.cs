@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerGameState : MonoBehaviour {
+
+	public bool hasDied = false;
 
 	// Use this for initialization
 	void Start () {
@@ -23,15 +26,15 @@ public class PlayerGameState : MonoBehaviour {
 		}
 	}
 
-	/*void OnCollisionEnter(Collider other) {
-		if (other.tag == "DeathField") {
-			playerDied ();
-			Debug.Log ("loadDeathScreen");
-		}
-	}*/
-
 	void playerDied() {
-		Application.LoadLevel ("DeathScreen");
+		hasDied = true;
+		GetComponentInChildren<ExplosionTrigger>().ExplodeMe();
+
+		this.Invoke("changeSceneAfterDeath",4.0f);
+	}
+
+	void changeSceneAfterDeath() {
+		SceneManager.LoadScene ("DeathScreen", LoadSceneMode.Single);
 	}
 
 	void playerWon() {

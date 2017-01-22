@@ -24,6 +24,9 @@ public class SingleButtonInput : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (Input.GetKeyDown (codeToCheckFor)) {
+			playerObject.GetComponent<AudioSource> ().Play ();
+		}
 		if (Input.GetKey (codeToCheckFor)) {
 			playerObject.GetComponent<Rigidbody> ().useGravity = false;
 			intense = permaIntense;
@@ -49,6 +52,7 @@ public class SingleButtonInput : MonoBehaviour {
 		this.intense = intense;
 		permaIntense = intense;
 		pressed = true;
+		playerObject.GetComponent<AudioSource> ().Play ();
 	}
 
 	public void ReleasedInput() {
